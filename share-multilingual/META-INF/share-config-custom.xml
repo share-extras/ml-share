@@ -1,0 +1,168 @@
+<alfresco-config>
+   <!-- Global config section -->
+   <config>
+       <flags>
+         <!--
+            Developer debugging setting to turn on DEBUG mode for client scripts in the browser
+         -->
+         <client-debug>true</client-debug>
+         <!--
+            LOGGING can always be toggled at runtime when in DEBUG mode (Ctrl, Ctrl, Shift, Shift).
+            This flag automatically activates logging on page load.
+         -->
+         <client-debug-autologging>true</client-debug-autologging>
+       </flags>
+       <forms>
+        <dependencies>
+            <js src="/components/documentlibrary/custom/forms/languagePicker.js" />
+        </dependencies>
+       </forms>
+   </config>
+
+   <config evaluator="string-compare" condition="DocLibCustom">
+        <dependencies>
+                <js src="/yui/cookie/cookie.js" />
+                <js src="/components/documentlibrary/custom/renderer/nodeType.js"/>
+                <js src="/components/documentlibrary/custom/actions/removeTranslation.js"/>
+        </dependencies>
+    </config>
+
+   <!-- Document Library config section -->
+   <config evaluator="string-compare" condition="DocumentLibrary">
+        <metadata-templates>
+            <template id="default">
+                 <line index="40" id="sys_locale" evaluator="evaluator.doclib.metadata.isMultilingual">{sys_locale}</line>
+            </template>
+        </metadata-templates>
+        <indicators>
+            <indicator id="isPivot" index="200" icon="pivot-16.png" label="is.pivot.document">
+                <evaluator>evaluator.doclib.metadata.isPivotLanguage</evaluator>
+            </indicator>
+            <indicator id="isTranslation" index="210" icon="translation-16.png" label="is.translation.document">
+                <evaluator negate="false">evaluator.doclib.metadata.isMultilingual</evaluator>
+            </indicator>
+        </indicators>
+   </config>
+   
+   <!-- Document Library Actions config section -->
+   <config evaluator="string-compare" condition="DocLibActions">
+
+      <!--
+         Action definitions
+      -->
+      <actions>
+         <!--  Remove translation-->
+         <action id="document-remove-translation" 
+                type="javascript" 
+                icon="removetranslation" 
+                label="actions.document.removetranslation">
+            <param name="function">onRemoveTranslation</param>
+            <permissions>
+               <permission allow="true">Write</permission>
+            </permissions>
+            <param name="successMessage">message.removeTranslation.success</param>
+            <param name="failureMessage">message.removeTranslation.failure</param>
+            <evaluator negate="false">evaluator.doclib.metadata.isMultilingual</evaluator>
+         </action>
+         
+         <action id="document-makemultilingual"
+                icon="makeml"
+                type="javascript"
+                label="actions.document.makemultilingual">
+            <permissions>
+                   <permission allow="true">Write</permission>
+            </permissions>
+            <param name="function">onActionFormDialog</param>
+            <param name="itemKind">action</param>
+            <param name="itemId">make-multilingual</param>
+            <param name="mode">create</param>
+            <param name="destination">{node.nodeRef}</param>
+            <param name="successMessage">message.document-made-multilingual.success</param>
+            <param name="failureMessage">message.document-made-multilingual.failure</param>
+            <evaluator negate="true">evaluator.doclib.metadata.isMultilingual</evaluator>
+           </action>
+      
+           <action id="add-translation"
+                    icon="addtrans"
+                    type="javascript"
+                    label="actions.document.addtranslation">
+                <permissions>
+                       <permission allow="true">Write</permission>
+                </permissions>
+                <param name="function">onActionFormDialog</param>
+                <param name="itemKind">action</param>
+                <param name="itemId">add-translation</param>
+                <param name="mode">create</param>
+                <param name="destination">{node.nodeRef}</param>
+                <param name="successMessage">message.document-made-multilingual.success</param>
+                <param name="failureMessage">message.document-made-multilingual.failure</param>
+                <evaluator negate="false">evaluator.doclib.metadata.isMultilingual</evaluator>
+               </action>
+           </actions>
+      
+          <actionGroups>
+             <actionGroup id="document-browse">
+                <action index="400" id="document-remove-translation" />
+                <action index="401" id="document-makemultilingual" />
+                <action index="402" id="add-translation" />
+             </actionGroup>
+             
+             <actionGroup id="document-details">
+                <action index="400" id="document-remove-translation" />
+                <action index="401" id="document-makemultilingual" />
+                <action index="402" id="add-translation" />
+             </actionGroup>
+             
+             
+          </actionGroups>
+          
+        </config>
+    
+        <config evaluator="string-compare" condition="make-multilingual">
+             <forms>
+                 <form>
+                     <field-visibility>
+                         <show id="author"/>
+                         <show id="language"/>
+                     </field-visibility>
+                     <appearance>
+                         <field id="author" label-id="makemultilingual.field.author"/>
+                         <field id="language" label-id="makemultilingual.field.language">
+                              <control template="controls/selectone.ftl">
+                                 <control-param name="options">en,fr,nl,de</control-param>
+                              </control>
+                         </field>
+                     </appearance>
+                </form>
+            </forms>
+        </config>
+        
+        <config evaluator="string-compare" condition="add-translation">
+             <forms>
+                 <form>
+                     <field-visibility>
+                         <show id="sourcetranslation"/>
+                     </field-visibility>
+                     <appearance>
+                         <field id="sourcetranslation" label-id="addtranslation.field.sourcetranslation">
+                               <control template="/org/alfresco/components/form/controls/translation.ftl">
+                                    <control-param name="displayMode">list</control-param>
+                                    <control-param name="compactMode">false</control-param>
+                                    <control-param name="forceEditable">true</control-param>
+                                    <control-param name="startLocation">{parent}</control-param>
+                                    <control-param name="valueType">cm:content</control-param>
+                                    <control-param name="itemType">cm:content</control-param>
+                                    <control-param name="endpointType">cm:content</control-param>
+                                    <control-param name="showTargetLink">true</control-param>
+                                    <control-param name="allowNavigationToContentChildren">false</control-param>
+                                    <control-param name="selectedValue">${node.nodeRef}</control-param>
+                                </control>  
+                         </field>
+                     </appearance>
+                </form>
+            </forms>
+        </config>
+        
+
+    
+</alfresco-config>

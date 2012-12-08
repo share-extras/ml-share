@@ -1,0 +1,10 @@
+<webscript>
+  <shortname>Se ML language pref</shortname>
+  <description>Get ML language pref from param "mllang" and set cookie "MLPREF" with the  corresponding value
+  </description>
+  <url>/multilingual/setmllanguagepref?mllang={mllang}</url>
+  <authentication>none</authentication>
+  <transaction>none</transaction>
+  <format default="json">argument</format>
+  <family>Alfresco multilingual</family>
+</webscript>

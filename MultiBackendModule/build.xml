@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<project name="Multi Backend Module" default="package-amp" basedir=".">
+	
+    <property name="project.dir" value="."/>
+    <property name="build.dir" value="${project.dir}/build"/>
+    <property name="config.dir" value="${project.dir}/config"/>
+    <property name="jar.file" value="${build.dir}/lib/multi-service.jar"/>
+    <property name="amp.file" value="${build.dir}/dist/multi-service.amp"/>
+	<property name="war.file" value="${project.dir}/alfresco.war" />
+	<property name="project.source" value="${project.dir}/source" />
+	<property name="tomcat.root" value="${project.dir}/../../../../../tomcats/4.1.1/tomcat" />
+	
+    <target name="mkdirs">
+        <mkdir dir="${build.dir}/dist" />
+        <mkdir dir="${build.dir}/lib" />
+    </target>
+    
+    <path id="class.path">
+        <dirset dir="${build.dir}" />
+        <fileset dir="../../lib/server" includes="**/*.jar"/>
+    </path>
+
+    <target name="compile">
+        <mkdir dir="${build.dir}/classes" />
+        <javac includeantruntime="false" classpathref="class.path" srcdir="${project.dir}/source/java" destdir="${build.dir}/classes" />
+    </target>
+    
+    <target name="package-jar" depends="compile">
+        <jar destfile="${jar.file}" >
+            <fileset dir="${build.dir}/classes" excludes="**/custom*,**/*Test*" includes="**/*.class,**/*.properties" />
+        	<!-- fileset dir="${project.source}" excludes="**/custom*,**/*Test*" includes="**/*.class,**/properties" / -->
+        </jar>
+    </target>
+	
+    <target name="package-amp" depends="mkdirs, package-jar" description="Package the Module" >
+        <zip destfile="${amp.file}" >
+            <fileset dir="${project.dir}/build" includes="lib/*.jar" />
+            <fileset dir="${project.dir}" includes="config/**/*.*" excludes="**/module.properties" />
+            <fileset dir="${project.dir}/config/alfresco/module/multibackend" includes="module.properties" />
+        </zip>
+    </target>
+
+	<!-- install the amp into the war file -->
+    <target name="update-war" depends="package-amp" description="Update the WAR file.  Set -Dwar.file=..." >
+        <echo>Installing Multi Backend into WAR</echo>
+    	<java     
+    	           dir="."
+    	           fork="true"
+    	           jar="${tomcat.root}/../bin/alfresco-mmt.jar"
+    	           >
+    	           <arg line="install  ./build/dist/ ./alfresco.war -directory"/>
+    	       </java>
+    </target>
+	
+	<!-- deploy and do some cleanup -->
+    <target name="deploy-module" depends="update-war" description="Deploy the module in tomcat local insance" >
+        <echo>Install war in tomcat, adjust "tomcat.root" if necessary</echo>
+        <delete quiet="true" dir="${tomcat.root}/work" />
+        <delete quiet="true" dir="${tomcat.root}/temp" />
+        <delete quiet="true" dir="${tomcat.root}/webapps/alfresco" />
+        <delete quiet="true" dir="${tomcat.root}/webapps/alfresco.war" />
+        <copy file="${war.file}" tofile="${tomcat.root}/webapps/alfresco.war" />
+    </target>
+
+</project>

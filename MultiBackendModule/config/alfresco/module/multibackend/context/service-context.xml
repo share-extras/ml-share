@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+    
+    <!-- A simple class that is initialized by Spring -->
+    <bean id="multibackend" class="org.alfresco.module.multibackend.MultiBackend" init-method="init" >
+    </bean>
+    
+    <!-- A simple module component that will be executed once -->
+    <bean id="multibackendComponent" class="org.alfresco.module.multibackend.MultiBackendComponent" parent="module.baseComponent" >
+        <property name="moduleId" value="multiBackend" />  <!-- See module.properties -->
+        <property name="name" value="multiBackend" />
+        <property name="description" value="Backend module for multi language" />
+        <property name="sinceVersion" value="1.0" />
+        <property name="appliesFromVersion" value="1.0" />
+    </bean>
+    
+</beans>

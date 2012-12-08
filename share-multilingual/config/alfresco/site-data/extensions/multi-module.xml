@@ -1,0 +1,20 @@
+<extension>
+    <modules>
+        <module>
+            <id>Change content language</id>
+            <components>
+                <component>
+                    <region-id>title</region-id>
+                    <source-id>repository</source-id>
+                    <scope>template</scope>
+                    <sub-components>
+                        <sub-component id="Change lang" index="25">
+                            <url>/org/alfresco/change-content-lang</url>
+                        </sub-component>
+                    </sub-components>
+                </component>
+             </components>
+             <auto-deploy>true</auto-deploy>
+        </module>
+    </modules>
+</extension>

@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Get Translations</shortname>
+  <description>Make a standard node multiningual</description>
+  <url>/multilingual/makemultilingual/node</url>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <format default="json">argument</format>
+  <family>Alfresco Java-Backed WebScripts making a node multilingual</family>
+</webscript>

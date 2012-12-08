@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<project name="share-multilingual" default="compile" basedir=".">
+
+	<property name="project.dir" value="."/>
+	<property name="build.dir" value="${project.dir}/build"/>
+	<property name="tomcat.dir" value="/home/philippe/curia/script-romain/tomcats/4.1.1/tomcat/"/>
+
+
+   <path id="class.path">
+      <dirset dir="${build.dir}" />
+      <fileset dir="../../lib/server" includes="**/*.jar"/>
+   </path>
+
+   <target name="compile">
+      <mkdir dir="${build.dir}" />
+      <javac classpathref="class.path" srcdir="${project.dir}/source" destdir="${build.dir}" />
+   </target>
+
+   <target name="build-jar" depends="compile" >
+      <jar destfile="${project.dir}/sharemulti.jar"  >
+	    <!-- zipfileset includes="**/*" src="alfresco-remote-api-orig.jar"/ -->
+   	    <fileset dir="${project.dir}/config"/>
+      	<fileset dir="${project.dir}/build"/>
+      	<metainf  dir="${project.dir}/META-INF"  includes="**/*.xml **/*.js **/*.png" />
+      </jar>
+   </target>
+
+   <target name="deploy" depends="build-jar" >
+   	    <copy file="${project.dir}/sharemulti.jar" todir="${tomcat.dir}/webapps/share/WEB-INF/lib"/>
+   </target>
+
+
+</project>

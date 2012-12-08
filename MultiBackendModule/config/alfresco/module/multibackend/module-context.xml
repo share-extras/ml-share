@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+	
+    <import resource="classpath:alfresco/module/multibackend/context/service-context.xml" />
+    
+     <bean id="webscript.org.alfresco.gettranslation.get" class="org.alfresco.module.multibackend.GetTranslations"
+           parent="webscript">
+         <property name="multilingualContentService" ref="MultilingualContentService" />
+         <property name="nodeService" ref="NodeService" />
+         <property name="dictionaryService" ref="DictionaryService" />
+         <property name="namespaceService" ref="namespaceService" />
+         <property name="permissionService" ref="permissionService" />
+     </bean>
+     
+     <bean id="webscript.org.alfresco.makemultilingual.post" class="org.alfresco.module.multibackend.MakeMultilingual"
+           parent="webscript">
+         <property name="multilingualContentService" ref="MultilingualContentService" />
+         <property name="nodeService" ref="NodeService" />
+     </bean>
+     
+     <bean id="webscript.org.alfresco.setmllanguagepref.get" class="org.alfresco.module.multibackend.SetMlLanguagePref"
+           parent="webscript">
+     </bean>
+     
+     <bean id="webscript.org.alfresco.removetranslation.get" class="org.alfresco.module.multibackend.RemoveTranslation"
+           parent="webscript">
+         <property name="multilingualContentService" ref="MultilingualContentService" />
+     </bean>
+     
+     <!-- override default in order to get sys:locale -->
+     <bean id="ignorePropertiesDecorator" parent="baseDecorator" class="org.alfresco.repo.jscript.app.IgnorePropertyDecorator">
+        <property name="propertyNames">
+            <set>
+                <value>cm:content</value>
+                <!-- value>sys:locale</value -->               
+                <value>sys:node-uuid</value>
+                <value>sys:store-protocol</value>
+                <value>sys:node-dbid</value>
+                <value>sys:store-identifier</value>
+            </set>
+        </property>
+    </bean>
+    
+   <!-- MakeMultilingualAction Action Bean -->
+   <bean id="make-multilingual" class="org.alfresco.module.multibackend.MakeMultilingualAction" parent="action-executer" >
+      <property name="nodeService">
+         <ref bean="nodeService" />
+      </property>
+      <property name="multilingualContentService" ref="multilingualContentService" />
+   </bean>
+   
+   <!-- AddTranslation Action Bean -->
+   <bean id="add-translation" class="org.alfresco.module.multibackend.AddTranslationAction" parent="action-executer" >
+      <property name="nodeService">
+         <ref bean="nodeService" />
+      </property>
+      <property name="multilingualContentService" ref="multilingualContentService" />
+   </bean>
+   
+   
+    <!-- Load the multilingual Action Messages -->   
+    <bean id="make-multilingual-messages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+        <property name="resourceBundles">
+            <list>
+                <value>org.alfresco.module.multibackend.make-multilingual-messages</value>
+                <value>org.alfresco.module.multibackend.add-translation-messages</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="multilingualPropertiesDecorator" parent="baseDecorator" class="org.alfresco.module.multibackend.MultilingualPropertyDecorator">
+       <property name="multilingualContentService" ref="multilingualContentService" />
+            <property name="propertyNames">
+            <set>
+                <value>sys:locale</value>
+            </set>
+       </property>
+    </bean>
+    
+   <!-- Multilingual specific service -->
+   <bean name="multilingualContentService" class="org.alfresco.repo.model.ml.MultilingualContentServiceImpl2" >
+      <property name="nodeService">
+         <ref bean="mlAwareNodeService" />
+      </property>
+      <property name="permissionService">
+         <ref bean="permissionService" />
+      </property>
+      <property name="contentFilterLanguagesService">
+         <ref bean="contentFilterLanguagesService" />
+      </property>
+      <property name="fileFolderService">
+         <ref bean="fileFolderService" />
+      </property>
+      <property name="versionService">
+         <ref bean="versionService" />
+      </property>
+      <property name="policyBehaviourFilter">
+         <ref bean="policyBehaviourFilter" />
+      </property>
+   </bean>
+     
+</beans>

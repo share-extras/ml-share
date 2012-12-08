@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<project name="CustomGlobalLocalisation" default="compile" basedir=".">
+	
+	<property name="project.dir" value="."/>
+	<property name="build.dir" value="${project.dir}/build"/>
+	<property name="jar.file" value="${build.dir}/lib/custom-global-localization.jar"/>
+	<property name="tomcat.dir" value="/home/philippe/curia/script-romain/tomcats/4.1.1/tomcat"/>
+	
+	
+   <!--path id="class.path">
+      <dirset dir="${build.dir}" />
+      <fileset dir="../../lib/server" includes="**/*.jar"/>
+   </path>
+   
+   <target name="compile">
+      <mkdir dir="${build.dir}" />
+      <javac classpathref="class.path" srcdir="${project.dir}/source" destdir="${build.dir}" />
+   </target-->
+
+	
+    <target name="mkdirs">
+        <mkdir dir="${build.dir}/dist" />
+        <mkdir dir="${build.dir}/lib" />
+    </target>
+
+    <path id="class.path">
+        <dirset dir="${build.dir}" />
+        <fileset dir="/opt/alfresco/sdks/latest/lib" includes="**/*.jar"/>
+    </path>
+
+    <target name="compile" >
+        <javac classpathref="class.path" srcdir="${project.dir}/source/java" destdir="${build.dir}/classes" />
+    </target>
+
+    <target name="package-jar" depends="compile,mkdirs">
+        <delete file="${jar.file}" quiet="true"/>
+        <jar destfile="${jar.file}" >
+            <fileset dir="${build.dir}/classes" excludes="**/*Test*" includes="**/*.class,**/*.xml" />
+        </jar>
+    </target>
+	
+    <target name="deploy" depends="package-jar" >
+	        <copy file="${jar.file}" todir="${tomcat.dir}/webapps/share/WEB-INF/lib"/>
+            <copy file="${jar.file}" todir="${tomcat.dir}/webapps/alfresco/WEB-INF/lib"/>
+	</target>
+   
+</project>	

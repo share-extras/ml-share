@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+	
+    <!-- Override in order to consider user's preference in terms of language -->
+    <bean id="emailUserNotifier" class="org.alfresco.repo.activities.feed.EmailUserNotifierUserLanguage">
+      <property name="activityService" ref="activityService"/>
+      <property name="namespaceService" ref="NamespaceService"/>
+      <property name="repoAdminService" ref="repoAdminService"/>
+      <property name="nodeService" ref="NodeService"/>
+      <property name="siteService" ref="SiteService"/>
+      <property name="actionService" ref="ActionService"/>
+      <property name="authenticationContext" ref="authenticationContext"/>
+      <property name="preferenceService" ref="PreferenceService"/>
+      <property name="fileFolderService" ref="FileFolderService"/>
+      <property name="feedEmailTemplateLocation" ref="feedEmailTemplateLocation"/>
+      <property name="searchService" ref="SearchService"/>
+      <property name="excludedEmailSuffixes">
+          <list>
+              <value>admin@alfresco.com</value>
+          </list>
+      </property>
+   </bean>
+     
+</beans>

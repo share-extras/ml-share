@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Get Translations</shortname>
+  <description>Returns the translations associated to a node</description>
+  <url>/multilingual/gettranslations/node?nodeRef={nodeRef}</url>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <format default="json">argument</format>
+  <family>Alfresco Java-Backed WebScripts Translations</family>
+</webscript>

@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Removetranslation from a translation group</shortname>
+  <description>Remove node from a translation bundle</description>
+  <url>/multilingual/removetranslation?nodeRef={nodeRef}</url>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <format default="html" />
+  <family>Alfresco Java-Backed WebScripts Translations</family>
+</webscript>
