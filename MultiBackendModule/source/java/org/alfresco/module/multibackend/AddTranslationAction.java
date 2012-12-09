@@ -27,8 +27,7 @@ public class AddTranslationAction extends ActionExecuterAbstractBase {
 	private NodeService nodeService;
 	private MultilingualContentService multilingualContentService;
 
-	public void setMultilingualContentService(
-			MultilingualContentService multilingualContentService) {
+	public void setMultilingualContentService(MultilingualContentService multilingualContentService) {
 		this.multilingualContentService = multilingualContentService;
 	}
 
@@ -40,12 +39,10 @@ public class AddTranslationAction extends ActionExecuterAbstractBase {
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_SOURCE_TRANSLATION,
 				DataTypeDefinition.TEXT, false, ""));
-		paramList.add(new ParameterDefinitionImpl(
-				PARAM_SOURCE_TRANSLATION_ADDED, DataTypeDefinition.TEXT, false,
-				""));
-		paramList.add(new ParameterDefinitionImpl(
-				PARAM_SOURCE_TRANSLATION_REMOVED, DataTypeDefinition.TEXT,
-				false, ""));
+		paramList.add(new ParameterDefinitionImpl(PARAM_SOURCE_TRANSLATION_ADDED,
+				DataTypeDefinition.TEXT, false, ""));
+		paramList.add(new ParameterDefinitionImpl(PARAM_SOURCE_TRANSLATION_REMOVED,
+				DataTypeDefinition.TEXT, false, ""));
 		paramList.add(new ParameterDefinitionImpl(PARAM_TRANSLATION_LANGUAGE,
 				DataTypeDefinition.TEXT, false, ""));
 
@@ -53,18 +50,17 @@ public class AddTranslationAction extends ActionExecuterAbstractBase {
 
 	@Override
 	protected void executeImpl(Action action, NodeRef actionedUponNodeRef) {
-		System.out.println("Action upon NodeRef:" + actionedUponNodeRef);
-		System.out.println("Source translation: "
-				+ action.getParameterValue(PARAM_SOURCE_TRANSLATION));
-		System.out.println("Translation added: "
-				+ action.getParameterValue(PARAM_SOURCE_TRANSLATION_ADDED));
-		System.out.println("Tanslation removed: "
-				+ action.getParameterValue(PARAM_SOURCE_TRANSLATION_REMOVED));
-		System.out.println("Added language: "
-				+ action.getParameterValue(PARAM_TRANSLATION_LANGUAGE));
-
-		String addedLanguages = (String) action
-				.getParameterValue(PARAM_TRANSLATION_LANGUAGE);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Action upon NodeRef in AddTranslationAction:" + actionedUponNodeRef);
+			logger.debug("Source translation: "
+					+ action.getParameterValue(PARAM_SOURCE_TRANSLATION));
+			logger.debug("Translation added: "
+					+ action.getParameterValue(PARAM_SOURCE_TRANSLATION_ADDED));
+			logger.debug("Tanslation removed: "
+					+ action.getParameterValue(PARAM_SOURCE_TRANSLATION_REMOVED));
+			logger.debug("Added language: " + action.getParameterValue(PARAM_TRANSLATION_LANGUAGE));
+		}
+		String addedLanguages = (String) action.getParameterValue(PARAM_TRANSLATION_LANGUAGE);
 
 		String addedLanguagesSplit[] = addedLanguages.split(",");
 
@@ -81,20 +77,21 @@ public class AddTranslationAction extends ActionExecuterAbstractBase {
 			NodeRef nodeRefTranslation = new NodeRef(nodeRefStr);
 			if (multilingualContentService.isTranslation(nodeRefTranslation)) {
 				// check that it is in the same multilingual document
-				if (multilingualContentService.getPivotTranslation(
-						nodeRefTranslation).equals(pivotTranslation)) {
+				if (multilingualContentService.getPivotTranslation(nodeRefTranslation).equals(
+						pivotTranslation)) {
 					// get language and modify it if required
-					Locale loc = (Locale) nodeService.getProperty(
-							nodeRefTranslation, ContentModel.PROP_LOCALE);
+					Locale loc = (Locale) nodeService.getProperty(nodeRefTranslation,
+							ContentModel.PROP_LOCALE);
 					if (!loc.getLanguage().endsWith(lang)) {
 						// modify the locale
-						nodeService.setProperty(nodeRefTranslation,
-								ContentModel.PROP_LOCALE, new Locale(lang));
+						nodeService.setProperty(nodeRefTranslation, ContentModel.PROP_LOCALE,
+								new Locale(lang));
 					}
 				}
 			} else {
 				// add the node as a translation
-				multilingualContentService.addTranslation(nodeRefTranslation,actionedUponNodeRef, new Locale(lang));
+				multilingualContentService.addTranslation(nodeRefTranslation, actionedUponNodeRef,
+						new Locale(lang));
 			}
 		}
 	}
