@@ -4,8 +4,8 @@
 
     <fieldset id="menubuttons">
         <fieldset id="menubuttonsfromjavascript">
-            <legend>Choose multilingual properties language:</legend>
+            <legend>${msg("select.multilingual.language")}:</legend>
         </fieldset>       
     </fieldset>
-    <input id="ml-checkbox" type="checkbox" name="fileChecked"  >
+    ${msg("change.content.lang.filter")}:<input id="ml-checkbox" type="checkbox" name="fileChecked"  >
  
