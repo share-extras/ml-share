@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.ml.MultilingualContentService;
+import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -92,6 +93,18 @@ public class AddTranslationAction extends ActionExecuterAbstractBase {
 				// add the node as a translation
 				multilingualContentService.addTranslation(nodeRefTranslation, actionedUponNodeRef,
 						new Locale(lang));
+			}
+			// update content url to stick with ContentModel.PROP_LOCALE It is
+			// important when indexing
+			ContentData content = (ContentData) nodeService.getProperty(nodeRefTranslation,
+					ContentModel.PROP_CONTENT);
+			if (content != null) {
+				// ContentData(String contentUrl, String mimetype, long size,
+				// String encoding, Locale locale)
+				ContentData updateContentWithLocale = new ContentData(content.getContentUrl(),
+						content.getMimetype(), content.getSize(), content.getEncoding(),
+						new Locale(lang));
+				nodeService.setProperty(nodeRefTranslation, ContentModel.PROP_CONTENT, updateContentWithLocale);
 			}
 		}
 	}

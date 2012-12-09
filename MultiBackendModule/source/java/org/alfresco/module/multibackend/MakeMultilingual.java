@@ -7,6 +7,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.ml.MultilingualContentService;
+import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -36,47 +37,53 @@ public class MakeMultilingual extends AbstractWebScript {
 		this.nodeService = nodeService;
 	}
 
-
-	public void setMultilingualContentService(
-			MultilingualContentService multilingualContentService) {
+	public void setMultilingualContentService(MultilingualContentService multilingualContentService) {
 		this.multilingualContentService = multilingualContentService;
 	}
 
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse res)
-			throws IOException {
+	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		try {
 			// Parse the JSON, if supplied
 			JSONObject json = null;
 			String contentType = req.getContentType();
 			if (contentType != null && contentType.indexOf(';') != -1) {
-				contentType = contentType
-						.substring(0, contentType.indexOf(';'));
+				contentType = contentType.substring(0, contentType.indexOf(';'));
 			}
 			if (MimetypeMap.MIMETYPE_JSON.equals(contentType)) {
 				JSONParser parser = new JSONParser();
 				try {
-					json = (JSONObject) parser.parse(req.getContent()
-							.getContent());
+					json = (JSONObject) parser.parse(req.getContent().getContent());
 				} catch (IOException io) {
-					throw new WebScriptException(Status.STATUS_BAD_REQUEST,
-							"Invalid JSON: " + io.getMessage());
+					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON: "
+							+ io.getMessage());
 				} catch (ParseException pe) {
-					throw new WebScriptException(Status.STATUS_BAD_REQUEST,
-							"Invalid JSON: " + pe.getMessage());
+					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON: "
+							+ pe.getMessage());
 				}
 			}
-			//if already multilingual then does noting
+			// if already multilingual then does noting
 			JSONObject jObj = new JSONObject();
 			Locale loc = new Locale(json.getString("locale"));
-			NodeRef nodeRef = new NodeRef(json.getString("protocol"),json.getString("identifier"),json.getString("nodeRef"));
-			if(multilingualContentService.isTranslation(nodeRef))
-			{
+			NodeRef nodeRef = new NodeRef(json.getString("protocol"), json.getString("identifier"),
+					json.getString("nodeRef"));
+			if (multilingualContentService.isTranslation(nodeRef)) {
 				jObj.put("ALDREADY_TRANSLATION", "true");
-			}
-			else
-			{
+			} else {
 				multilingualContentService.makeTranslation(nodeRef, loc);
+				// update content url to stick with ContentModel.PROP_LOCALE It
+				// is
+				// important when indexing
+				ContentData content = (ContentData) nodeService.getProperty(nodeRef,
+						ContentModel.PROP_CONTENT);
+				if (content != null) {
+					// ContentData(String contentUrl, String mimetype, long
+					// size,
+					// String encoding, Locale locale)
+					ContentData updateContentWithLocale = new ContentData(content.getContentUrl(),
+							content.getMimetype(), content.getSize(), content.getEncoding(), loc);
+					nodeService.setProperty(nodeRef, ContentModel.PROP_CONTENT, updateContentWithLocale);
+				}
 			}
 			jObj.put("STATUS", "OK");
 			String jsonString = json.toString();
