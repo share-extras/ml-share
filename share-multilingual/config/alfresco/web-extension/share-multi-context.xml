@@ -11,6 +11,14 @@
       </property>
    </bean>
    
+   <bean id="evaluator.doclib.metadata.isEmptyTranslation" class="org.alfresco.web.evaluator.HasAspectEvaluator">
+      <property name="aspects">
+         <list>
+            <value>cm:mlEmptyTranslation</value>
+         </list>
+      </property>
+   </bean>
+   
    <bean id="evaluator.doclib.metadata.isPivotLanguage" class="org.alfresco.web.evaluator.IsPivotLanguage">
    </bean>
    

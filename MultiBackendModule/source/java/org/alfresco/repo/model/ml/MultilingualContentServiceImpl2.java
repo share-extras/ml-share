@@ -406,13 +406,16 @@ public class MultilingualContentServiceImpl2 implements MultilingualContentServi
 					ContentModel.ASPECT_MULTILINGUAL_EMPTY_TRANSLATION)) {
 				nodeService.removeAspect(translationNodeRef,
 						ContentModel.ASPECT_MULTILINGUAL_EMPTY_TRANSLATION);
+				
 				nodeService.addAspect(translationNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-			} else {
-				if (nodeService.hasAspect(translationNodeRef,
+			}
+			if (nodeService.hasAspect(translationNodeRef,
 						ContentModel.ASPECT_MULTILINGUAL_DOCUMENT))
+			{
 					nodeService.removeAspect(translationNodeRef,
 							ContentModel.ASPECT_MULTILINGUAL_DOCUMENT);
 			}
+			
 			List<ChildAssociationRef> assocRefs = nodeService.getParentAssocs(translationNodeRef,
 					ContentModel.ASSOC_MULTILINGUAL_CHILD, RegexQNamePattern.MATCH_ALL);
 			if (assocRefs.size() != 1)

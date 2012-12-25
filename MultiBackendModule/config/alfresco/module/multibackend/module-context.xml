@@ -51,6 +51,14 @@
       <property name="multilingualContentService" ref="multilingualContentService" />
    </bean>
    
+   <!-- Add empty translation Action Bean -->
+   <bean id="add-emptytranslation" class="org.alfresco.module.multibackend.AddEmptyTranslationAction" parent="action-executer" >
+      <property name="nodeService">
+         <ref bean="nodeService" />
+      </property>
+      <property name="multilingualContentService" ref="multilingualContentService" />
+   </bean>
+   
    <!-- AddTranslation Action Bean -->
    <bean id="add-translation" class="org.alfresco.module.multibackend.AddTranslationAction" parent="action-executer" >
       <property name="nodeService">
@@ -100,5 +108,15 @@
          <ref bean="policyBehaviourFilter" />
       </property>
    </bean>
+   
+    <!-- Empty translation -->
+    <bean id="emptyTranslationAspect" class="org.alfresco.repo.model.ml.EmptyTranslationAspect2" init-method="init">
+        <property name="policyComponent">
+            <ref bean="policyComponent" />
+        </property>
+        <property name="nodeService">
+            <ref bean="mlAwareNodeService" />
+        </property>
+    </bean>
      
 </beans>

@@ -41,8 +41,12 @@
             <indicator id="isTranslation" index="210" icon="translation-16.png" label="is.translation.document">
                 <evaluator negate="false">evaluator.doclib.metadata.isMultilingual</evaluator>
             </indicator>
+            <indicator id="isEmptyTranslation" index="220" icon="emptytranslation-16.png" label="is.emptytranslation.document">
+                <evaluator negate="false">evaluator.doclib.metadata.isEmptyTranslation</evaluator>
+            </indicator>
         </indicators>
    </config>
+   
    
    <!-- Document Library Actions config section -->
    <config evaluator="string-compare" condition="DocLibActions">
@@ -81,6 +85,23 @@
             <param name="failureMessage">message.document-made-multilingual.failure</param>
             <evaluator negate="true">evaluator.doclib.metadata.isMultilingual</evaluator>
            </action>
+           
+           <action id="document-addemptytranslation"
+                icon="addempty"
+                type="javascript"
+                label="actions.document.addemptytranslation">
+            <permissions>
+                   <permission allow="true">Write</permission>
+            </permissions>
+            <param name="function">onActionFormDialog</param>
+            <param name="itemKind">action</param>
+            <param name="itemId">add-emptytranslation</param>
+            <param name="mode">create</param>
+            <param name="destination">{node.nodeRef}</param>
+            <param name="successMessage">message.document-addemptytranslation.success</param>
+            <param name="failureMessage">message.document-addemptytranslation.failure</param>
+            <evaluator negate="false">evaluator.doclib.metadata.isMultilingual</evaluator>
+           </action>
       
            <action id="add-translation"
                     icon="addtrans"
@@ -105,12 +126,14 @@
                 <action index="400" id="document-remove-translation" />
                 <action index="401" id="document-makemultilingual" />
                 <action index="402" id="add-translation" />
+                <action index="403" id="document-addemptytranslation" />
              </actionGroup>
              
              <actionGroup id="document-details">
                 <action index="400" id="document-remove-translation" />
                 <action index="401" id="document-makemultilingual" />
                 <action index="402" id="add-translation" />
+                <action index="403" id="document-addemptytranslation" />
              </actionGroup>
              
              
@@ -127,6 +150,23 @@
                      </field-visibility>
                      <appearance>
                          <field id="author" label-id="makemultilingual.field.author"/>
+                         <field id="language" label-id="makemultilingual.field.language">
+                              <control template="controls/selectone.ftl">
+                                 <control-param name="options">en,fr,nl,de</control-param>
+                              </control>
+                         </field>
+                     </appearance>
+                </form>
+            </forms>
+        </config>
+        
+       <config evaluator="string-compare" condition="add-emptytranslation">
+             <forms>
+                 <form>
+                     <field-visibility>
+                         <show id="language"/>
+                     </field-visibility>
+                     <appearance>
                          <field id="language" label-id="makemultilingual.field.language">
                               <control template="controls/selectone.ftl">
                                  <control-param name="options">en,fr,nl,de</control-param>
